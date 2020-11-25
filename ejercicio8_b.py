@@ -5,16 +5,6 @@ import cv2
 
 from utils import video_transformation
 
-TRACKERS = {
-    "csrt": cv2.TrackerCSRT_create,
-    "kcf": cv2.TrackerKCF_create,
-    "boosting": cv2.TrackerBoosting_create,
-    "mil": cv2.TrackerMIL_create,
-    "tld": cv2.TrackerTLD_create,
-    "medianflow": cv2.TrackerMedianFlow_create,
-    "mosse": cv2.TrackerMOSSE_create
-}
-
 
 def process_frame(im_bgr, tracker):
     success, box = tracker.update(im_bgr)
@@ -50,12 +40,23 @@ def action(args):
                          window_name=f"Tracking {os.path.basename(innput)}", video_capture=video_capture)
 
 
+TRACKERS = {
+    "csrt": cv2.TrackerCSRT_create,
+    "kcf": cv2.TrackerKCF_create,
+    "boosting": cv2.TrackerBoosting_create,
+    "mil": cv2.TrackerMIL_create,
+    "tld": cv2.TrackerTLD_create,
+    "medianflow": cv2.TrackerMedianFlow_create,
+    "mosse": cv2.TrackerMOSSE_create
+}
+
+
 def parse_arguments():
     # Create the parser
     parser = argparse.ArgumentParser(description="Visual Tracking CV")
     # Add parser output.
     parser.add_argument("--image", required=True, help="Set video input path")
-    parser.add_argument("--tracker", type=str, default="kcf",
+    parser.add_argument("--tracker", type=str, default="csrt",
                         choices=list(TRACKERS.keys()),
                         help="OpenCV object tracker type")
     # Set the parser function.
@@ -67,7 +68,7 @@ def parse_arguments():
 
 if __name__ == "__main__":
     # --image ./media/bolt.avi
-    # try:
-    parse_arguments()
-    # except Exception as e:
-    #     print("Error:", e)
+    try:
+        parse_arguments()
+    except Exception as e:
+        print("Error:", e)
