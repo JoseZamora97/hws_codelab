@@ -1,11 +1,15 @@
 import cv2
+
 from tqdm import tqdm
 
 OUT_CODEC = 'MJPG'
 DEFAULT_FPS = 10
 
+video_writer: cv2.VideoCapture
 
-def video_transformation(video_source, output, fps, process_frame_function, args=tuple()):
+
+def video_transformation(video_source, output, fps, process_frame_function,
+                         args=tuple(), window_name='Video', video_capture: cv2.VideoCapture=None):
     """
     Process a video from a video source and apply the callable process_frame_function
     in every frame. Save the result in the output param.
@@ -20,11 +24,12 @@ def video_transformation(video_source, output, fps, process_frame_function, args
     the frame (BGR) as the first parameter and args with rest of the parameters. This
     function must return the processed/transformed or non-modified frame.
     :param args: optional parameters
-
+    :param window_name: Name of the window
+    :param video_capture: This override the video source param in the video capture. Using this instead
     :return: None
     """
     # Open the video
-    video = cv2.VideoCapture(video_source)
+    video = cv2.VideoCapture(video_source) if not video_capture else video_capture
     # Create the codec to save the video
     fourcc = cv2.VideoWriter_fourcc(*OUT_CODEC)
 
@@ -41,26 +46,32 @@ def video_transformation(video_source, output, fps, process_frame_function, args
 
     amount_frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
 
-    # Create the video writer
-    video_writer = cv2.VideoWriter(
-        output, fourcc, v_fps, (int(width), int(height))
-    )
+    global video_writer
+    if output:
+        # Create the video writer
+        video_writer = cv2.VideoWriter(
+            output, fourcc, v_fps, (int(width), int(height))
+        )
 
     progress_bar = tqdm(total=amount_frames)
     while video.isOpened():
         ret, frame = video.read()  # Get frame
         if ret:
+
             processed_frame = process_frame_function(frame, *args)  # Process the frame.
-            cv2.imshow("Video", processed_frame)  # Show the video
-            video_writer.write(processed_frame)  # Write frame
+            cv2.imshow(window_name, processed_frame)  # Show the video
             progress_bar.update(1)
-        else:
-            break
+
+            if output:
+                video_writer.write(processed_frame)  # Write frame
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
 
     video.release()
-    video_writer.release()
+    if output:
+        video_writer.release()
     cv2.destroyAllWindows()
+
+    return

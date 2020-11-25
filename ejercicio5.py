@@ -80,21 +80,9 @@ def parse_arguments():
     # Create the parser
     parser = argparse.ArgumentParser(description="EyeFaceDetector")
     # Add parser input.
-    parser.add_argument(
-        "-v",
-        "--video",
-        default=None,
-        type=str,
-        help="Set the video input path",
-    )
+    parser.add_argument("-v", "--video", required=True, type=str, help="Set the video input path")
     # Add parser output.
-    parser.add_argument(
-        "-o",
-        "--out",
-        default=None,
-        type=str,
-        help="Set the the processed video output path",
-    )
+    parser.add_argument("-o", "--out", required=True, type=str, help="Set the the processed video output path")
     # Set the parser function.
     parser.set_defaults(func=action)
     # Parse the arguments.

@@ -17,9 +17,7 @@ def _init_():
     global hog_descriptor
 
     hog_descriptor = cv2.HOGDescriptor()
-    hog_descriptor.setSVMDetector(
-        cv2.HOGDescriptor_getDefaultPeopleDetector()
-    )
+    hog_descriptor.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 
 def process_frame(im_bgr):
@@ -54,15 +52,9 @@ def parse_arguments():
     # Create the parser
     parser = argparse.ArgumentParser(description="Pedestrian Detector")
     # Add parser input.
-    parser.add_argument(
-        "--images", default=None, type=str,
-        help="Set the video input path",
-    )
+    parser.add_argument("--images", required=True, type=str, help="Set the video input path")
     # Add parser output.
-    parser.add_argument(
-        "--out", default=None, type=str,
-        help="Set the the processed video output path",
-    )
+    parser.add_argument("--out", default=None, type=str, help="Set the the processed video output path")
     # Set the parser function.
     parser.set_defaults(func=action)
     # Parse the arguments.

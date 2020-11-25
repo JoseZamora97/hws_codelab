@@ -136,26 +136,13 @@ def parse_arguments():
     # Create the parser
     parser = argparse.ArgumentParser(description="Visual Tracking")
     # Add parser input.
-    parser.add_argument(
-        "--video", default=None,
-        help="Set the video input path",
-    )
+    parser.add_argument("--video", default=None, required=True, help="Set the video input path")
     # Add parser output.
-    parser.add_argument(
-        "--output", default=None,
-        help="Set the the processed video output path",
-    )
+    parser.add_argument("--output", default=None, required=True, help="Set the the processed video output path")
     # Add parser min values
-    parser.add_argument(
-        "--min_values", default=None, nargs=3, type=int,
-        help="Set HSV min values",
-    )
+    parser.add_argument("--min_values", nargs=3, type=int, help="Set HSV min values", required=True)
     # Add parser max values
-    parser.add_argument(
-        "--max_values", nargs=3, type=int,
-        help="Set HSV max values",
-    )
-
+    parser.add_argument("--max_values", nargs=3, type=int, help="Set HSV max values", required=True)
     # Set the parser function.
     parser.set_defaults(func=action)
     # Parse the arguments.

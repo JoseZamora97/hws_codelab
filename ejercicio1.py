@@ -1,11 +1,10 @@
 import argparse
 import copy
-import random
 import os
 import queue
-
-from queue import Queue
+import random
 from concurrent.futures.thread import ThreadPoolExecutor
+from queue import Queue
 from typing import List
 
 from PIL import Image, ImageFilter
@@ -13,7 +12,6 @@ from tqdm import tqdm
 
 
 class ImageOperations:
-
     config = {
         'radius_interval': [2, 10],
         'resize_interval': [0.25, 2.5]
@@ -218,37 +216,18 @@ def action(args):
 def parse_arguments():
     # Create the parser
     parser = argparse.ArgumentParser(description="Data Augmentation")
-
     # Add parser input.
-    parser.add_argument(
-        "-i",
-        "--input_dataset",
-        default=None,
-        help="Set the Imagenet input directory",
-    )
+    parser.add_argument("-i", "--input_dataset", required=True,
+                        help="Set the Imagenet input directory")
     # Add parser output.
-    parser.add_argument(
-        "-o",
-        "--output",
-        default=None,
-        help="Set the Imagenet augmented root directory",
-    )
+    parser.add_argument("-o", "--output", required=True,
+                        help="Set the Imagenet augmented root directory")
     # Add parser factor.
-    parser.add_argument(
-        "-f",
-        "--factor",
-        type=int,
-        default=None,
-        help="Set the factor of augmentation"
-    )
+    parser.add_argument("-f", "--factor", type=int, required=True,
+                        help="Set the factor of augmentation")
     # Add parser workers.
-    parser.add_argument(
-        "-w",
-        "--workers",
-        default=None,
-        help="Set the amount of threads you want to use",
-        type=int
-    )
+    parser.add_argument("-w", "--workers", default=None, type=int,
+                        help="Set the amount of threads you want to use")
 
     # Set the parser function.
     parser.set_defaults(func=action)
