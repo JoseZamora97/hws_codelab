@@ -1,3 +1,5 @@
 from utils import utils
 
-video_transformation = utils.video_transformation
+proc_video = utils.video_transformation
+timeit = utils.timer
+split_array = utils.array_splitter

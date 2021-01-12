@@ -1,6 +1,7 @@
-import cv2
+import functools
+import time
 
-from tqdm import tqdm
+import cv2
 
 OUT_CODEC = 'MJPG'
 DEFAULT_FPS = 10
@@ -9,7 +10,7 @@ video_writer: cv2.VideoCapture
 
 
 def video_transformation(video_source, output, fps, process_frame_function,
-                         args=tuple(), window_name='Video', video_capture: cv2.VideoCapture=None):
+                         args=tuple(), window_name='Video', video_capture: cv2.VideoCapture = None):
     """
     Process a video from a video source and apply the callable process_frame_function
     in every frame. Save the result in the output param.
@@ -44,34 +45,39 @@ def video_transformation(video_source, output, fps, process_frame_function,
     else:
         v_fps = fps
 
-    amount_frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
-
     global video_writer
     if output:
         # Create the video writer
-        video_writer = cv2.VideoWriter(
-            output, fourcc, v_fps, (int(width), int(height))
-        )
+        video_writer = cv2.VideoWriter(output, fourcc, v_fps, (int(width), int(height)))
 
-    progress_bar = tqdm(total=amount_frames)
     while video.isOpened():
         ret, frame = video.read()  # Get frame
         if ret:
 
             processed_frame = process_frame_function(frame, *args)  # Process the frame.
             cv2.imshow(window_name, processed_frame)  # Show the video
-            progress_bar.update(1)
-
-            if output:
-                video_writer.write(processed_frame)  # Write frame
+            if output: video_writer.write(processed_frame)  # Write frame
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
 
     video.release()
-    if output:
-        video_writer.release()
+    if output: video_writer.release()
     cv2.destroyAllWindows()
 
-    return
+
+def timer(function):
+    @functools.wraps(function)
+    def wrapper_timer(*args, **kwargs):
+        tic = time.perf_counter()
+        res = function(*args, **kwargs)
+        toc = time.perf_counter()
+        return res, toc - tic
+
+    return wrapper_timer
+
+
+def array_splitter(array, num):
+    amount = 1 if num < 1 else num
+    return [array[n:n + amount] for n in range(0, len(array), amount)]
